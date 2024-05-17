@@ -1,3 +1,5 @@
+#include <iostream>
+#include "emprestimo.hpp"
 class Usuario{
     public:
         std::string login;
@@ -9,7 +11,7 @@ class Usuario{
             telefone = _telefone;
             email = _email;
         }
-        ~Usuario(){}
+        ~Usuario(){};
         bool Login(std::string _login, std::string _senha){
             bool loginStatus;
             if(_login == login && senha == _senha){
@@ -20,22 +22,10 @@ class Usuario{
             }
             return loginStatus;
         }
-        std::vector<Livro> ConsultarLivro(){
-            std::vector<Livro> livros;
-            return livros;
-        }
-        Emprestimo EmprestarLivro(){
-            
-        }
-        Emprestimo DevolverLivro(){
-
-        }
-        Multa AplicarMulta(){
-            
-        }
     protected:
         std::string cpf, nome, telefone, email;
-        bool status;
+        float multa;
+        Emprestimo emprestimo;
     private:
         std::string senha;
 };

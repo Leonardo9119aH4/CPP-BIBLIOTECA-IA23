@@ -1,8 +1,13 @@
+#include <iostream>
+#include <chrono>
+#include "livro.hpp"
 class Emprestimo{
     public:
-
+        Emprestimo(){
+            
+        }
+        ~Emprestimo(){}
     protected:
-        std::string data, hora;
-        Usuario usuario;
+        auto data, hora, dataDevolucao;
         Livro livro;
 };
