@@ -1,6 +1,18 @@
+#include <iostream>
+#ifndef LIVRO_HPP
+#define LIVRO_HPP
 class Livro{
     public:
-        std::string nome, isbn, genero, data;
-        Editora editora;
-        Autor autor;
+        Livro(std::string _nome, std::string _isbn, std::string _genero, int _ano, std::string _autor, std::string _editora){
+            nome = _nome;
+            isbn = _isbn;
+            genero = _genero;
+            ano = _ano;
+            autor = _autor;
+            editora = _editora;
+        }
+        ~Livro(){};
+        std::string nome, isbn, genero, autor, editora;
+        int ano;
 };
+#endif
