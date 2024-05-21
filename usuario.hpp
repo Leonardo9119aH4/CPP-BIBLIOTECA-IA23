@@ -55,11 +55,24 @@ class Usuario{
         float getMulta(){
             return multa;
         }
+        void setMulta(float valor){
+            multa = valor;
+        }
     protected:
         std::string cpf, nome, telefone, email;
         float multa;
+        bool isAdmin;
         // Emprestimo emprestimo;
     private:
         std::string senha;
+};
+class Admin : Usuario{
+    public: 
+        Admin(){
+            isAdmin = true;
+        }
+        void setMulta(Usuario user, float valor){
+            user.setMulta(valor);
+        }
 };
 #endif
