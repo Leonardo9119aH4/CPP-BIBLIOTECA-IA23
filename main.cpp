@@ -1,11 +1,8 @@
 #include <iostream>
-#include <vector>
 #include <chrono>
 #include <ctime>
 #include "usuario.hpp"
 #include "livro.hpp"
-std::vector <Usuario> usuarios;
-std::vector <Livro> livros;
 Usuario Cadastrar(){
     std::string login, senha, nome, cpf, telefone, email;
     std::cout << "Cadastro\nCrie seu nome de usuario: " << std::endl;
@@ -20,7 +17,6 @@ Usuario Cadastrar(){
     std::cin >> telefone;
     std::cout << "Digite o seu email: " << std::endl;
     std::cin >> email;
-    usuarios.push_back(user(login, senha, nome, cpf, telefone, email));
     Usuario user(login, senha, nome, cpf, telefone, email);
     return user;
 }
