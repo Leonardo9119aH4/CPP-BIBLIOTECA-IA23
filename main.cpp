@@ -4,9 +4,9 @@
 #include <ctime>
 #include "usuario.hpp"
 #include "livro.hpp"
-std::vector <Usuario> usuarios;
-std::vector <Livro> livros;
-Usuario Cadastrar(){
+std::vector<Usuario*> usuarios;
+std::vector<Livro*> livros;
+void Cadastrar(){
     std::string login, senha, nome, cpf, telefone, email;
     std::cout << "Cadastro\nCrie seu nome de usuario: " << std::endl;
     std::cin >> login;
@@ -20,11 +20,10 @@ Usuario Cadastrar(){
     std::cin >> telefone;
     std::cout << "Digite o seu email: " << std::endl;
     std::cin >> email;
-    usuarios.push_back(user(login, senha, nome, cpf, telefone, email));
-    Usuario user(login, senha, nome, cpf, telefone, email);
-    return user;
+    Usuario* user = new Usuario(login, senha, nome, cpf, telefone, email);
+    usuarios.push_back(user);
 }
-void Login(Usuario* user){
+void Login(){
     std::string login, senha;
     bool status;
     do{
@@ -32,13 +31,16 @@ void Login(Usuario* user){
         std::cin >> login;
         std::cout << "Digite a sua senha: " << std::endl;
         std::cin >> senha;
-        status = user->Login(login, senha);
-        if(status){
-            std::cout << "Exito ao logar!" << std::endl;
+        for(Usuario* user : usuarios){
+            status = user->login(login, senha);
+            if(status){
+                std::cout << "Exito ao logar!" << std::endl;
+                opcaoUser(user);
+            }
+            else{
+                std::cout << "Login e/ou senha errado(s)!" << std::endl;
+            }
         }
-        else{
-            std::cout << "Senha e/ou nome de usuario invalido! " << std::endl;
-        } 
     } while(!status);
 }
 Livro CadLivro(){
@@ -59,8 +61,8 @@ Livro CadLivro(){
     Livro livro(nome, isbn, genero, ano, autor, editora);
     return livro;
 }
-void ConsultarLivros(Livro* l1, Livro* l2, Livro* l3){
-    std::cout << "Temos disponiveis:\n" << l1->nome << std::endl << l2->nome << std::endl << l3->nome << std::endl;
+void ConsultarLivros(){
+    for()
 }
 void PagarMulta(Usuario* user){
     float valor;
@@ -68,45 +70,20 @@ void PagarMulta(Usuario* user){
     std::cin >> valor;
     user->PagarMulta(valor);
 }
-void Emprestar(Livro* l1, Livro* l2, Livro* l3, Usuario* user){
-    std::string livro;
-    bool status;
-    std::cout << "Qual o nome do livro que voce quer emprestado? " << std::endl;
-    std::cin >> livro;
-    if(l1->nome == livro){
-        status = user->Emprestar(l1);
-    }
-    else if(l2->nome == livro){
-        status = user->Emprestar(l2);
-    }
-    else if(l3->nome == livro){
-        status = user->Emprestar(l3);
-    }
-    else{
-        std::cout << "Livro não encontrado! " << std::endl;
-        Emprestar(l1, l2, l3, user);
-    }
-    if(!status){
-        std::cout << "Voce nao pode pegar livro emprestado pois tem multa a pagar" << std::endl;
-        PagarMulta(user);
-    }
+void Emprestar(){
+
 }
 void Devolver(Usuario* user){
-    user->Devolver(0);
+
+}
+void opcaoUser(Usuario* user){
+    while(true){
+        ConsultarLivros();
+        Emprestar();
+        Devolver();
+    }
 }
 int main(){
-    Usuario user1 = Cadastrar();
-    Login(&user1); 
-    Livro livro1 = CadLivro();
-    Livro livro2 = CadLivro();
-    Livro livro3 = CadLivro();
-    while(true){
-        ConsultarLivros(&livro1, &livro2, &livro3);
-        Emprestar(&livro1, &livro2, &livro3, &user1);
-        Devolver(&user1);
-        if(user1.getMulta()>0){
-            PagarMulta(&user1);
-        }
-    }
+
     return 0;
 }
