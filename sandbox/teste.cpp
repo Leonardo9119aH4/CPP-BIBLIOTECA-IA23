@@ -1,9 +1,16 @@
 #include <iostream>
-#include <chrono>
+#include <string>
+#include <typeinfo>
+class A{
+    public:
+        A(){
+
+        }
+        int Y;
+};
 int main(){
-    time_t data = std::time(nullptr);
-    std::tm* tm_ptr = std::localtime(&data);
-    int dia = tm_ptr->tm_mday;
-    std::cout << dia;
+    A X;
+    std::string name = typeid(X).name();
+    std::cout << name;
     return 0;
 }
