@@ -18,7 +18,7 @@ class Usuario{
             email = _email;
             multa = 0;
         }
-        ~Usuario(){};
+        virtual ~Usuario(){};
         bool Login(std::string _login, std::string _senha){
             bool loginStatus;
             if(_login == login && senha == _senha){

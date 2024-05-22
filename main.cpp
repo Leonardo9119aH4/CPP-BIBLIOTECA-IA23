@@ -73,10 +73,61 @@ void Devolver(Usuario* user){
     std::time_t hoje = std::time(nullptr);
     user->Devolver(hoje);
 }
+void DeletarLivro(std::vector<Livro>* livros){
+    std::string isbn;
+    std::cout << "Digite o ISBN do livro a ser deletado:" << std::endl;
+    std::cin >> isbn;
+    // for(int i = 0; i < livros->size(); ++i){
+    //     if(livros->at(i).isbn==isbn){
+    //         delete livros->at(i);
+    //         livros->at(i) = nullptr;
+    //     }
+    // }
+}
+void DeletarUsuario(std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
+    std::string username;
+    std::cout << "Digite o nome de usuario a ser deletado:" << std::endl;
+    std::cin >> username;
+    // for(int i = 0; i < usuarios->size(); ++i){
+    //     if(usuarios->at(i).login==username){
+    //         delete usuarios->at(i);
+    //         usuarios->at(i) = nullptr;
+    //     }
+    // }
+    // for(int i = 0; i < admins->size(); ++i){
+    //         if(admins->at(i).login==username){
+    //         delete admins->at(i);
+    //         admins->at(i) = nullptr;
+    //     }
+    // }
+}
+void CadLivro(std::vector<Livro>* livros){
+    std::string nome, isbn, genero, autor, editora;
+    int ano;
+    std::cout << "Cadastro livro\nDigite o nome do livro:" << std::endl;
+    std::cin >> nome;
+    std::cout << "Digite o isbn do livro:" << std::endl;
+    std::cin >> isbn;
+    std::cout << "Digite o genero do livro:" << std::endl;
+    std::cin >> genero;
+    std::cout << "Digite o ano de edicao do livro:" << std::endl;
+    std::cin >> ano;
+    std::cout << "Digite o autor do livro:" << std::endl;
+    std::cin >> autor;
+    std::cout << "Digite a editora do livro:" << std::endl;
+    std::cin >> editora;
+    Livro livro(nome, isbn, genero, ano, autor, editora);
+    livros->push_back(livro);
+}
 void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
     int Opc;
     do{
-        std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Logout\nSelecione a opcao: " << std::endl;
+        if(dynamic_cast<Admin*>(user)){ //admin
+            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Cadastrar livro\n7-Cadastrar Admin\n8- Deletar livro\n9- Deletar usuario\nSelecione a opcao: " << std::endl;
+        }
+        else{
+            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Logout\nSelecione a opcao: " << std::endl;
+        }
         std::cin >> Opc;
         switch (Opc)
         {
@@ -96,27 +147,26 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
             PagarMulta(user);
             break;
         case 6:
-            if(dynamic_cast<Usuario*>(user)){
+            if(dynamic_cast<Admin*>(user)){
                 CadLivro(livros);
             }
             else{
                 Opc=10;
-                std::cout << "Opcao invalida!" << std::endl;
             }
             break;
         case 7:
-            if(dynamic_cast<Usuario*>(user)){
+            if(dynamic_cast<Admin*>(user)){
                 Cadastrar(usuarios, admins, true);
             }
             break;
         case 8:
-            if(dynamic_cast<Usuario*>(user)){
-                
+            if(dynamic_cast<Admin*>(user)){
+                DeletarLivro(livros);
             }
             break;
         case 9:
-            if(dynamic_cast<Usuario*>(user)){
-                
+            if(!dynamic_cast<Admin*>(user)){
+                DeletarUsuario(usuarios, admins);
             }
             break;
         case 10:
@@ -145,7 +195,7 @@ void Login(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, std::vect
             }
         }
         for(int i = 0; i < admins->size(); ++i){
-            status = usuarios->at(i).Login(login, senha);
+            status = admins->at(i).Login(login, senha);
             if(status){
                 std::cout << "Bem-vindo admin" << std::endl;
                 hasLoged=true;
@@ -156,24 +206,6 @@ void Login(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, std::vect
             std::cout << "Nome de usuario e/ou senha incorretos(s)!" << std::endl;
         }
     } while(!status);
-}
-void CadLivro(std::vector<Livro>* livros){
-    std::string nome, isbn, genero, autor, editora;
-    int ano;
-    std::cout << "Cadastro livro\nDigite o nome do livro:" << std::endl;
-    std::cin >> nome;
-    std::cout << "Digite o isbn do livro:" << std::endl;
-    std::cin >> isbn;
-    std::cout << "Digite o genero do livro:" << std::endl;
-    std::cin >> genero;
-    std::cout << "Digite o ano de edicao do livro:" << std::endl;
-    std::cin >> ano;
-    std::cout << "Digite o autor do livro:" << std::endl;
-    std::cin >> autor;
-    std::cout << "Digite a editora do livro:" << std::endl;
-    std::cin >> editora;
-    Livro livro(nome, isbn, genero, ano, autor, editora);
-    livros->push_back(livro);
 }
 int main(){
     std::vector<Admin> admins;
