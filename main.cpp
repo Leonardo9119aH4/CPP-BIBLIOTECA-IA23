@@ -9,7 +9,7 @@ void defaultAdmin(std::vector<Admin>* admins){
     Admin admin("Admin", "Admin", "Admin", "ADM", "ADM", "biblioteca@ifc.confia");
     admins->push_back(admin);
 }
-void Cadastrar(std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
+void Cadastrar(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, bool isAdmin){
     bool conflito;
     std::string login, senha, nome, cpf, telefone, email;
     std::cout << "Cadastro\nCrie seu nome de usuario: " << std::endl;
@@ -33,8 +33,14 @@ void Cadastrar(std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
         }
     }
     if(!conflito){
-        Usuario user(login, senha, nome, cpf, telefone, email);
-        usuarios->push_back(user);
+        if(isAdmin){
+            Admin admin(login, senha, nome, cpf, telefone, email);
+            admins->push_back(admin);
+        }
+        else{
+            Usuario user(login, senha, nome, cpf, telefone, email);
+            usuarios->push_back(user);
+        }
     }
 }
 void ConsultarLivros(std::vector<Livro>* livros){
@@ -67,7 +73,7 @@ void Devolver(Usuario* user){
     std::time_t hoje = std::time(nullptr);
     user->Devolver(hoje);
 }
-void opcaoUser(Usuario* user, std::vector<Livro>* livros){
+void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
     int Opc;
     do{
         std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Logout\nSelecione a opcao: " << std::endl;
@@ -90,17 +96,37 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros){
             PagarMulta(user);
             break;
         case 6:
-            std::cout << "Logout!" << std::endl;
+            if(dynamic_cast<Usuario*>(user)){
+                CadLivro(livros);
+            }
+            else{
+                Opc=10;
+                std::cout << "Opcao invalida!" << std::endl;
+            }
             break;
         case 7:
             if(dynamic_cast<Usuario*>(user)){
-
+                Cadastrar(usuarios, admins, true);
             }
+            break;
+        case 8:
+            if(dynamic_cast<Usuario*>(user)){
+                
+            }
+            break;
+        case 9:
+            if(dynamic_cast<Usuario*>(user)){
+                
+            }
+            break;
+        case 10:
+            std::cout << "Logout!" << std::endl;
+            break;
         default:
             std::cout << "Opcao invalida!" << std::endl;
             break;
         }
-    } while(Opc!=6);
+    } while(Opc!=10);
 }
 void Login(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, std::vector<Livro>* livros){
     std::string login, senha;
@@ -115,7 +141,7 @@ void Login(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, std::vect
             if(status){
                 std::cout << "Exito ao logar!" << std::endl;
                 hasLoged=true;
-                opcaoUser(&usuarios->at(i), livros);
+                opcaoUser(&usuarios->at(i), livros, usuarios, admins);
             }
         }
         for(int i = 0; i < admins->size(); ++i){
@@ -123,7 +149,7 @@ void Login(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, std::vect
             if(status){
                 std::cout << "Bem-vindo admin" << std::endl;
                 hasLoged=true;
-                opcaoUser(&admins->at(i), livros);
+                opcaoUser(&admins->at(i), livros, usuarios, admins);
             }
         }
         if(!hasLoged){
@@ -161,7 +187,7 @@ int main(){
         switch (Opc)
         {
         case 1:
-            Cadastrar(&usuarios, &admins);
+            Cadastrar(&usuarios, &admins, false);
             break;
         case 2:
             Login(&usuarios, &admins, &livros);

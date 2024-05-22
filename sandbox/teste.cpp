@@ -1,16 +1,24 @@
 #include <iostream>
 #include <string>
 #include <typeinfo>
-class A{
+class Obj{
     public:
-        A(){
+        Obj(){
 
         }
         int Y;
 };
+class Sub : public Obj{
+    public:
+        Sub(){
+
+        }
+        int Z;
+};
 int main(){
-    A X;
-    std::string name = typeid(X).name();
-    std::cout << name;
+    Obj X;
+    if(dynamic_cast<Obj>(X)){
+        std::cout << "True";
+    }
     return 0;
 }
