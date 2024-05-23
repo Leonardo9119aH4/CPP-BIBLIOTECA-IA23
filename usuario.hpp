@@ -39,11 +39,9 @@ class Usuario{
             }
             return false;
         }
-        void Devolver(std::time_t dataDevEfetiva){
-            int devId, diasAtraso;
+        bool Devolver(std::time_t dataDevEfetiva, int devId){
+            int diasAtraso;
             bool foiDeletado = false;
-            std::cout << "Digite o ID do emprestimo a devolver: " << std::endl;
-            std::cin >> devId;
             for(size_t i = 0; i < emprestimos.size(); ++i){
                 if(devId == emprestimos[i]->getId()){
                     diasAtraso = dataDevEfetiva - emprestimos[i]->getDataDevolucao();
@@ -54,13 +52,7 @@ class Usuario{
                     foiDeletado = true;
                 }
             }
-            if(foiDeletado){
-                std::cout << "Emprestimo devolvido com exito!" << std::endl;
-            }
-            else{
-                std::cout << "Nenhum emprestimo encontrado com ID especificado" << std::endl;
-            }
-            
+            return foiDeletado;        
         }
         void ConsultarEmpr(){
             for(Emprestimo* empr : emprestimos){

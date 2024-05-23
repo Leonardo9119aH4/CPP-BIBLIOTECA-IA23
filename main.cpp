@@ -70,8 +70,21 @@ void Emprestar(Usuario* user, std::vector<Livro>* livros){
     }
 }
 void Devolver(Usuario* user){
+    bool devolvido;
+    int devId;
     std::time_t hoje = std::time(nullptr);
-    user->Devolver(hoje);
+    std::cout << "Digite o ID do emprestimo a devolver: " << std::endl;
+    std::cin >> devId;
+    devolvido = user->Devolver(hoje, devId);
+    if(devolvido){
+        std::cout << "O livro foi devolvido!" << std::endl;
+    }
+    else{
+        std::cout << "Não possui emprestimo com ID especificado." << std::endl;
+    }
+}
+void ConsultarEmpr(Usuario* user){
+    user->ConsultarEmpr();
 }
 void DeletarLivro(std::vector<Livro>* livros){
     std::string isbn;
@@ -101,6 +114,24 @@ void DeletarUsuario(std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
     //     }
     // }
 }
+void MultarUsuario(std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
+    std::string username;
+    float valor;
+    std::cout << "Digite o nome de usuario a alterar a multa:" << std::endl;
+    std::cin >> username;
+    std::cout << "Digite o valor da multa a ser aplicado:" << std::endl;
+    std::cin >> valor;
+    for(int i = 0; i < usuarios->size(); ++i){
+        if(usuarios->at(i).login==username){
+            usuarios->at(i).setMulta(valor);
+        }
+    }
+    for(int i = 0; i < admins->size(); ++i){
+            if(admins->at(i).login==username){
+                usuarios->at(i).setMulta(valor);
+        }
+    }
+}
 void CadLivro(std::vector<Livro>* livros){
     std::string nome, isbn, genero, autor, editora;
     int ano;
@@ -123,10 +154,10 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
     int Opc;
     do{
         if(dynamic_cast<Admin*>(user)){ //admin
-            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Cadastrar livro\n7-Cadastrar Admin\n8- Deletar livro\n9- Deletar usuario\nSelecione a opcao: " << std::endl;
+            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Cadastrar livro\n8-Cadastrar Admin\n9- Deletar livro\n10- Deletar usuario\n11- Multar usuario\n12- Logout\nSelecione a opcao: " << std::endl;
         }
         else{
-            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Logout\nSelecione a opcao: " << std::endl;
+            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Logout\nSelecione a opcao: " << std::endl;
         }
         std::cin >> Opc;
         switch (Opc)
@@ -147,65 +178,71 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
             PagarMulta(user);
             break;
         case 6:
+
+            break;
+        case 7:
             if(dynamic_cast<Admin*>(user)){
                 CadLivro(livros);
             }
             else{
-                Opc=10;
-            }
-            break;
-        case 7:
-            if(dynamic_cast<Admin*>(user)){
-                Cadastrar(usuarios, admins, true);
+                Opc=12;
             }
             break;
         case 8:
             if(dynamic_cast<Admin*>(user)){
-                DeletarLivro(livros);
+                Cadastrar(usuarios, admins, true);
             }
             break;
         case 9:
+            if(dynamic_cast<Admin*>(user)){
+                DeletarLivro(livros);
+            }
+            break;
+        case 10:
             if(!dynamic_cast<Admin*>(user)){
                 DeletarUsuario(usuarios, admins);
             }
             break;
-        case 10:
+        case 11:
+            if(dynamic_cast<Admin*>(user)){
+                MultarUsuario(usuarios, admins);
+            }
+            break;
+        case 12:
             std::cout << "Logout!" << std::endl;
             break;
         default:
             std::cout << "Opcao invalida!" << std::endl;
             break;
         }
-    } while(Opc!=10);
+    } while(Opc!=12);
 }
 void Login(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, std::vector<Livro>* livros){
     std::string login, senha;
     bool status=false, hasLoged=false;
-    do{
-        std::cout << "Login\nDigite o seu nome de usuario: " << std::endl;
-        std::cin >> login;
-        std::cout << "Digite a sua senha: " << std::endl;
-        std::cin >> senha;
-        for(int i = 0; i < usuarios->size(); ++i){
-            status = usuarios->at(i).Login(login, senha);
-            if(status){
-                std::cout << "Exito ao logar!" << std::endl;
-                hasLoged=true;
-                opcaoUser(&usuarios->at(i), livros, usuarios, admins);
-            }
+    std::cout << "Login\nDigite o seu nome de usuario: " << std::endl;
+    std::cin >> login;
+    std::cout << "Digite a sua senha: " << std::endl;
+    std::cin >> senha;
+    for(int i = 0; i < usuarios->size(); ++i){
+        status = usuarios->at(i).Login(login, senha);
+        if(status){
+            std::cout << "Exito ao logar!" << std::endl;
+            hasLoged=true;
+            opcaoUser(&usuarios->at(i), livros, usuarios, admins);
         }
-        for(int i = 0; i < admins->size(); ++i){
-            status = admins->at(i).Login(login, senha);
-            if(status){
-                std::cout << "Bem-vindo admin" << std::endl;
-                hasLoged=true;
-                opcaoUser(&admins->at(i), livros, usuarios, admins);
-            }
+    }
+    for(int i = 0; i < admins->size(); ++i){
+        status = admins->at(i).Login(login, senha);
+        if(status){
+            std::cout << "Bem-vindo admin" << std::endl;
+            hasLoged=true;
+            opcaoUser(&admins->at(i), livros, usuarios, admins);
         }
-        if(!hasLoged){
-            std::cout << "Nome de usuario e/ou senha incorretos(s)!" << std::endl;
-        }
-    } while(!status);
+    }
+    if(!hasLoged){
+        std::cout << "Nome de usuario e/ou senha incorretos(s)!" << std::endl;
+    }
 }
 int main(){
     std::vector<Admin> admins;
