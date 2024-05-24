@@ -1,24 +1,11 @@
 #include <iostream>
-#include <string>
-#include <typeinfo>
-class Obj{
-    public:
-        Obj(){
-
-        }
-        int Y;
-};
-class Sub : public Obj{
-    public:
-        Sub(){
-
-        }
-        int Z;
-};
+void func(int* Z){
+    //Z=1;
+}
 int main(){
-    Obj X;
-    if(dynamic_cast<Obj>(X)){
-        std::cout << "True";
-    }
+    int X=0;
+    int* Y=&X;
+    func(&X);
+    std::cout << Y;
     return 0;
 }
