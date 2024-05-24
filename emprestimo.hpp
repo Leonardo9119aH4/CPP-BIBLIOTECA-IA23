@@ -7,16 +7,16 @@
 #include "livro.hpp"
 class Emprestimo{
     public:
-        Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro){
+        Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro, std::vector<Emprestimo>* emprestimos){
             dataEmprestimo = _dataEmpr;
             dataDevolucao = _dataDevolucao;
             livro = _livro;
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_int_distribution<> dis(1000000, 9999999);
-            id = dis(gen);
+            id = emprestimos->size()+1;
         }
-        ~Emprestimo(){}
+        ~Emprestimo(){
+            delete livro;
+            livro = nullptr;
+        }
         Livro* getLivro(){
             return livro;
         }

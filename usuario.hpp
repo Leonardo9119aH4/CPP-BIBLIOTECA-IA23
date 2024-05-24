@@ -33,21 +33,21 @@ class Usuario{
             if(multa<=0){
                 std::time_t dataEmprestimo = std::time(nullptr);
                 std::time_t dataDevolucao = dataEmprestimo + 336*3600; //time_t só salva em segundos
-                Emprestimo* empr = new Emprestimo(dataEmprestimo, dataDevolucao, _livro);
+                Emprestimo empr(dataEmprestimo, dataDevolucao, _livro, &emprestimos);
                 emprestimos.push_back(empr);
                 return true;
             }
             return false;
         }
         bool Devolver(std::time_t dataDevEfetiva, int devId){
-            int diasAtraso;
+            time_t timePointAtraso;
             bool foiDeletado = false;
             for(size_t i = 0; i < emprestimos.size(); ++i){
-                if(devId == emprestimos[i]->getId()){
-                    diasAtraso = dataDevEfetiva - emprestimos[i]->getDataDevolucao();
-                    Multar(diasAtraso);
-                    delete emprestimos[i];
-                    emprestimos[i] = nullptr;
+                if(devId == emprestimos[i].getId()){
+                    timePointAtraso = dataDevEfetiva - emprestimos[i].getDataDevolucao();
+                    Multar(timePointAtraso);
+                    // delete emprestimos[i];
+                    // emprestimos[i] = nullptr;
                     emprestimos.erase(emprestimos.begin() + i);
                     foiDeletado = true;
                 }
@@ -55,12 +55,19 @@ class Usuario{
             return foiDeletado;        
         }
         void ConsultarEmpr(){
-            for(Emprestimo* empr : emprestimos){
-                std::cout << "Emprestimo ID " << empr->getId() << " realizado no dia " << empr->getDiaEmpr() << " para devolver ate " << empr->getDiaDev() << "com o livro " << empr->getLivro()->nome << std::endl; 
+            bool temEmpr=false;
+            for(Emprestimo empr : emprestimos){
+                std::cout << "Emprestimo ID " << empr.getId() << " realizado no dia " << empr.getDiaEmpr() << " para devolver ate " << empr.getDiaDev() << " com o livro " << empr.getLivro()->nome << std::endl;
+                temEmpr=true;
+            }
+            if(!temEmpr){
+                std::cout << "Voce nao possui emprestimos ativos." << std::endl;
             }
         }
-        void Multar(int _diasAtraso){
-            multa += _diasAtraso*1;
+        void Multar(time_t _timePoint){
+            std::tm* tm_ptr = std::localtime(&_timePoint);
+            int diasAtraso = tm_ptr->tm_mday;
+            multa += diasAtraso;
         }
         void PagarMulta(float valor){
             multa -= valor;
@@ -75,7 +82,7 @@ class Usuario{
         std::string cpf, nome, telefone, email;
         float multa;
         bool isAdmin;
-        std::vector<Emprestimo*> emprestimos;
+        std::vector<Emprestimo> emprestimos;
     private:
         std::string senha;
 };

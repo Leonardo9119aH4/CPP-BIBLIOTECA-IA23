@@ -26,7 +26,7 @@ void Cadastrar(std::vector<Usuario>* usuarios, std::vector<Admin>* admins, bool 
     std::cin >> email;
     for(int i = 0; i < usuarios->size(); ++i){
         for(int j = 0; j < admins->size(); ++j){
-            if(usuarios->at(i).login==login || admins->at(i).login==login){
+            if(usuarios->at(i).login==login || admins->at(j).login==login){
             std::cout << "Esse nome de usuario ja existe!" << std::endl;
             conflito=true;
             }
@@ -68,6 +68,12 @@ void Emprestar(Usuario* user, std::vector<Livro>* livros){
             status = user->Emprestar(&livros->at(i));
         }
     }
+    if(status){
+        std::cout << "Emprestimo realizado com exito!" << std::endl;
+    }
+    else{
+        std::cout << "Voce nao pode realizar o emprestimo pois tem multa pendente" << std::endl;
+    }
 }
 void Devolver(Usuario* user){
     bool devolvido;
@@ -90,29 +96,26 @@ void DeletarLivro(std::vector<Livro>* livros){
     std::string isbn;
     std::cout << "Digite o ISBN do livro a ser deletado:" << std::endl;
     std::cin >> isbn;
-    // for(int i = 0; i < livros->size(); ++i){
-    //     if(livros->at(i).isbn==isbn){
-    //         delete livros->at(i);
-    //         livros->at(i) = nullptr;
-    //     }
-    // }
+    for(int i = 0; i < livros->size(); ++i){
+        if(livros->at(i).isbn==isbn){
+            livros->erase(livros->begin() + i);
+        }
+    }
 }
 void DeletarUsuario(std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
     std::string username;
     std::cout << "Digite o nome de usuario a ser deletado:" << std::endl;
     std::cin >> username;
-    // for(int i = 0; i < usuarios->size(); ++i){
-    //     if(usuarios->at(i).login==username){
-    //         delete usuarios->at(i);
-    //         usuarios->at(i) = nullptr;
-    //     }
-    // }
-    // for(int i = 0; i < admins->size(); ++i){
-    //         if(admins->at(i).login==username){
-    //         delete admins->at(i);
-    //         admins->at(i) = nullptr;
-    //     }
-    // }
+    for(int i = 0; i < usuarios->size(); ++i){
+        if(usuarios->at(i).login==username){
+            usuarios->erase(usuarios->begin() + i);
+        }
+    }
+    for(int i = 0; i < admins->size(); ++i){
+            if(admins->at(i).login==username){
+            admins->erase(admins->begin() + i);
+        }
+    }
 }
 void MultarUsuario(std::vector<Usuario>* usuarios, std::vector<Admin>* admins){
     std::string username;
@@ -178,7 +181,7 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
             PagarMulta(user);
             break;
         case 6:
-
+            ConsultarEmpr(user);
             break;
         case 7:
             if(dynamic_cast<Admin*>(user)){
@@ -199,7 +202,7 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
             }
             break;
         case 10:
-            if(!dynamic_cast<Admin*>(user)){
+            if(dynamic_cast<Admin*>(user)){
                 DeletarUsuario(usuarios, admins);
             }
             break;
