@@ -13,10 +13,7 @@ class Emprestimo{
             livro = _livro;
             id = emprestimos->size()+1;
         }
-        ~Emprestimo(){
-            delete livro;
-            livro = nullptr;
-        }
+        ~Emprestimo() {};
         Livro* getLivro(){
             return livro;
         }
@@ -30,13 +27,15 @@ class Emprestimo{
             return id;
         }
         int getDiaEmpr(){
-            std::tm* tm_ptr = std::localtime(&dataEmprestimo);
-            int dia = tm_ptr->tm_mday;
+            struct tm diaTm;
+            localtime_s(&diaTm, &dataEmprestimo);
+            int dia = diaTm.tm_mday;
             return dia;
         }
         int getDiaDev(){
-            std::tm* tm_ptr = std::localtime(&dataDevolucao);
-            int dia = tm_ptr->tm_mday;
+            struct tm diaTm;
+            localtime_s(&diaTm, &dataDevolucao);
+            int dia = diaTm.tm_mday;
             return dia;
         }
     protected:

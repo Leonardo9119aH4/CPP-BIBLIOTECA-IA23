@@ -9,7 +9,7 @@
 class Usuario{
     public:
         std::string login;
-        Usuario(std::string _login, std::string _senha, std::string _nome, std::string _cpf, std::string _telefone, std::string _email){
+        Usuario(std::string _login, std::string _senha, std::string _nome, std::string _cpf, std::string _telefone, std::string _email, bool _isAdmin){
             login = _login;
             senha = _senha;
             nome = _nome;
@@ -17,6 +17,7 @@ class Usuario{
             telefone = _telefone;
             email = _email;
             multa = 0;
+            isAdmin = _isAdmin;
         }
         virtual ~Usuario(){};
         bool Login(std::string _login, std::string _senha){
@@ -46,8 +47,6 @@ class Usuario{
                 if(devId == emprestimos[i].getId()){
                     timePointAtraso = dataDevEfetiva - emprestimos[i].getDataDevolucao();
                     Multar(timePointAtraso);
-                    // delete emprestimos[i];
-                    // emprestimos[i] = nullptr;
                     emprestimos.erase(emprestimos.begin() + i);
                     foiDeletado = true;
                 }
@@ -65,8 +64,9 @@ class Usuario{
             }
         }
         void Multar(time_t _timePoint){
-            std::tm* tm_ptr = std::localtime(&_timePoint);
-            int diasAtraso = tm_ptr->tm_mday;
+            struct tm diaTm;
+            localtime_s(&diaTm, &_timePoint);
+            int diasAtraso = diaTm.tm_mday;
             multa += diasAtraso;
         }
         void PagarMulta(float valor){
@@ -78,6 +78,9 @@ class Usuario{
         void setMulta(float valor){
             multa = valor;
         }
+        bool getAdmin() {
+            return isAdmin;
+        }
     protected:
         std::string cpf, nome, telefone, email;
         float multa;
@@ -85,15 +88,5 @@ class Usuario{
         std::vector<Emprestimo> emprestimos;
     private:
         std::string senha;
-};
-class Admin : public Usuario{
-    public: 
-        Admin(std::string _login, std::string _senha, std::string _nome, std::string _cpf, std::string _telefone, std::string _email) : Usuario(_login, _senha, _nome, _cpf, _telefone, _email){
-            isAdmin = true;
-        }
-        void setMulta(Usuario* user, float valor){
-            user->setMulta(valor);
-        }
-        bool isAdmin;
 };
 #endif
