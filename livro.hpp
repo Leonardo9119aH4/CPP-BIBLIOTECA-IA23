@@ -10,9 +10,11 @@ class Livro{
             ano = _ano;
             autor = _autor;
             editora = _editora;
+            emprestado = false;
         }
         ~Livro(){};
         std::string nome, isbn, genero, autor, editora;
         int ano;
+        bool emprestado;
 };
 #endif

@@ -19,7 +19,7 @@ class Usuario{
             multa = 0;
             isAdmin = _isAdmin;
         }
-        virtual ~Usuario(){};
+        ~Usuario(){};
         bool Login(std::string _login, std::string _senha){
             bool loginStatus;
             if(_login == login && senha == _senha){
@@ -36,6 +36,7 @@ class Usuario{
                 std::time_t dataDevolucao = dataEmprestimo + 336*3600; //time_t só salva em segundos
                 Emprestimo empr(dataEmprestimo, dataDevolucao, _livro, &emprestimos);
                 emprestimos.push_back(empr);
+                _livro->emprestado = true;
                 return true;
             }
             return false;
@@ -43,10 +44,13 @@ class Usuario{
         bool Devolver(std::time_t dataDevEfetiva, int devId){
             time_t timePointAtraso;
             bool foiDeletado = false;
+            Livro* _livro;
             for(size_t i = 0; i < emprestimos.size(); ++i){
                 if(devId == emprestimos[i].getId()){
                     timePointAtraso = dataDevEfetiva - emprestimos[i].getDataDevolucao();
                     Multar(timePointAtraso);
+                    _livro = emprestimos.at(i).getLivro();
+                    _livro->emprestado = false;
                     emprestimos.erase(emprestimos.begin() + i);
                     foiDeletado = true;
                 }
@@ -77,6 +81,9 @@ class Usuario{
         }
         void setMulta(float valor){
             multa = valor;
+        }
+        void setLivroStatus(Livro* _livro, bool _emprestado) {
+            _livro->emprestado = _emprestado;
         }
         bool getAdmin() {
             return isAdmin;
