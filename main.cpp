@@ -59,13 +59,29 @@ void ConsultarLivros(std::vector<Livro>* livros){
     }
 }
 void ConsultarMulta(Usuario* user){
-    std::cout << "Voce possui multa de R$" << user->getMulta() << std::endl;
+    if (user->getMulta() > 0) {
+        std::cout << "Voce possui multa de R$" << user->getMulta() << std::endl;
+    }
+    else {
+        std::cout << "Voce nao possui multa pendente" << std::endl;
+    }
 }
 void PagarMulta(Usuario* user){
     float valor;
-    std::cout << "Voce tem multa de R$" << user->getMulta() << "\nQual valor voce vai pagar? " << std::endl;
-    std::cin >> valor;
-    user->PagarMulta(valor);
+    if (user->getMulta() > 0) {
+        std::cout << "Voce tem multa de R$" << user->getMulta() << "\nQual valor voce vai pagar? " << std::endl;
+        std::cin >> valor;
+        if (valor > user->getMulta()) {
+            std::cout << "Voce nao pode pagar um valor mais alto do que a multa!" << std::endl;
+        }
+        else {
+            user->PagarMulta(valor);
+            std::cout << "Multa paga com exito" << std::endl;
+        }
+    }
+    else {
+        std::cout << "Voce nao possui multa pendente" << std::endl;
+    }
 }
 void Emprestar(Usuario* user, std::vector<Livro>* livros){
     std::string isbn;
@@ -102,7 +118,7 @@ void Devolver(Usuario* user){
         std::cout << "O livro foi devolvido!" << std::endl;
     }
     else{
-        std::cout << "Não possui emprestimo com ID especificado." << std::endl;
+        std::cout << "Nao possui emprestimo com ID especificado." << std::endl;
     }
 }
 void ConsultarEmpr(Usuario* user){
@@ -121,6 +137,17 @@ void DeletarLivro(std::vector<Livro>* livros){
     }
     if (!livroExiste) {
         std::cout << "O livro nao existe!" << std::endl;
+    }
+}
+void ListarUsuarios(std::vector<Usuario>* usuarios) {
+    std::cout << "Lista de usuarios:" << std::endl;
+    for (int i = 0; i < usuarios->size(); ++i) {
+        if (usuarios->at(i).getAdmin()) {
+            std::cout << usuarios->at(i).login << " sendo pertencente a " << usuarios->at(i).getNome() << " sob CPF " << usuarios->at(i).getCPF() << ", eh um Admin" << std::endl;
+        }
+        else {
+            std::cout << usuarios->at(i).login << " sendo pertencente a " << usuarios->at(i).getNome() << " sob CPF " << usuarios->at(i).getCPF() << ", eh um usuario comum" << std::endl;
+        }
     }
 }
 void DeletarUsuario(std::vector<Usuario>* usuarios){
@@ -217,7 +244,7 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
     int opc;
     do{
         if(user->getAdmin()){ //admin
-            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Cadastrar livro\n8-  Cadastrar Admin\n9- Deletar livro\n10- Deletar usuario\n11- Multar usuario\n12- Alterar status de emprestimo de um livro\n13- Logout\nSelecione a opcao: " << std::endl;
+            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Cadastrar livro\n8-  Cadastrar Admin\n9- Deletar livro\n10- Deletar usuario\n11- Multar usuario\n12- Alterar status de emprestimo de um livro\n13- Listar usuarios cadastrados \n14- Logout\nSelecione a opcao: " << std::endl;
         }
         else{
             std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Logout\nSelecione a opcao: " << std::endl;
@@ -248,7 +275,7 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
                 CadLivro(livros);
             }
             else{
-                opc=13;
+                opc=14;
             }
             break;
         case 8:
@@ -292,13 +319,21 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
             }
             break;
         case 13:
+            if (user->getAdmin()) {
+                ListarUsuarios(usuarios);
+            }
+            else {
+                opc = -1;
+            }
+            break;
+        case 14:
             std::cout << "Logout!" << std::endl;
             break;
         default:
             std::cout << "Opcao invalida!" << std::endl;
             break;
         }
-    } while(opc!=13);
+    } while(opc!=14);
 }
 void Login(std::vector<Usuario>* usuarios, std::vector<Livro>* livros){
     std::string login, senha;
