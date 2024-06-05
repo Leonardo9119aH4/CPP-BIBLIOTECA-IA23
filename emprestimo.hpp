@@ -7,37 +7,14 @@
 #include "livro.hpp"
 class Emprestimo{
     public:
-        Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro, std::vector<Emprestimo>* emprestimos){
-            dataEmprestimo = _dataEmpr;
-            dataDevolucao = _dataDevolucao;
-            livro = _livro;
-            id = emprestimos->size()+1;
-        }
+        Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro, std::vector<Emprestimo>* emprestimos) {};
         ~Emprestimo() {};
-        Livro* getLivro(){
-            return livro;
-        }
-        std::time_t getDataEmpr(){
-            return dataEmprestimo;
-        }
-        std::time_t getDataDevolucao(){
-            return dataDevolucao;
-        }
-        int getId(){
-            return id;
-        }
-        int getDiaEmpr(){
-            struct tm diaTm;
-            localtime_s(&diaTm, &dataEmprestimo);
-            int dia = diaTm.tm_mday;
-            return dia;
-        }
-        int getDiaDev(){
-            struct tm diaTm;
-            localtime_s(&diaTm, &dataDevolucao);
-            int dia = diaTm.tm_mday;
-            return dia;
-        }
+        Livro* getLivro() {};
+        std::time_t getDataEmpr(){}
+        std::time_t getDataDevolucao() {};
+        int getId() {};
+        int getDiaEmpr() {};
+        int getDiaDev() {};
     protected:
         std::time_t dataEmprestimo, dataDevolucao;
         int id;

@@ -88,6 +88,12 @@ class Usuario{
         bool getAdmin() {
             return isAdmin;
         }
+        std::string getNome() {
+            return nome;
+        }
+        std::string getCPF() {
+            return cpf;
+        }
     protected:
         std::string cpf, nome, telefone, email;
         float multa;
