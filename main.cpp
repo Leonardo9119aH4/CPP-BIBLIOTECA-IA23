@@ -47,13 +47,13 @@ void Cadastrar(std::vector<Usuario>* usuarios, bool isAdmin) {
 void ConsultarLivros(std::vector<Livro>* livros){
     std::cout << "Temos disponiveis: " << std::endl;
     for(int i = 0; i < livros->size(); ++i){
-        if (!livros->at(i).emprestado) {
+        if (livros->at(i).getDisponiveis() > 0) {
             std::cout << "Nome: " << livros->at(i).nome << "; ISBN: " << livros->at(i).isbn << "; Ano: " << livros->at(i).ano << "; Genero: " << livros->at(i).genero << "; Autor: " << livros->at(i).autor << "; Editora: " << livros->at(i).editora << std::endl;
         }  
     }
     std::cout << "Livros nao disponiveis:" << std::endl;
     for (int i = 0; i < livros->size(); ++i) {
-        if (livros->at(i).emprestado) {
+        if (livros->at(i).getDisponiveis() <= 0) {
             std::cout << "Nome: " << livros->at(i).nome << "; ISBN: " << livros->at(i).isbn << "; Ano: " << livros->at(i).ano << "; Genero: " << livros->at(i).genero << "; Autor: " << livros->at(i).autor << "; Editora: " << livros->at(i).editora << std::endl;
         }
     }
@@ -85,26 +85,25 @@ void PagarMulta(Usuario* user){
 }
 void Emprestar(Usuario* user, std::vector<Livro>* livros){
     std::string isbn;
-    bool status=false, livroExiste=false;
+    int status=-3;
     std::cout << "Digite o ISBN do livro que voce quer: " << std::endl;
     std::cin >> isbn;
-    for(int i = 0; i < livros->size(); ++i){
-        if(livros->at(i).isbn==isbn && !livros->at(i).emprestado){
+    for (int i = 0; i < livros->size(); ++i) {
+        if (livros->at(i).isbn == isbn) {
             status = user->Emprestar(&livros->at(i));
-            livroExiste = true;
-            break;
         }
     }
-    if (livroExiste) {
-        if (status) {
-            std::cout << "Emprestimo realizado com exito!" << std::endl;
-        }
-        else {
-            std::cout << "Voce nao pode realizar o emprestimo pois tem multa pendente" << std::endl;
-        }
+    if (status == 1) {
+        std::cout << "Emprestimo realizado com exito!" << std::endl;
     }
-    else {
-        std::cout << "Esse livro nao existe ou nao esta disponivel" << std::endl;
+    if (status == -1) {
+        std::cout << "Voce nao pode realizar emprestimo pois tem multa pendente" << std::endl;
+    }
+    if (status == -2) {
+        std::cout << "Esse livro nao esta disponivel neste momento" << std::endl;
+    }
+    if (status == -3) {
+        std::cout << "Nao existe livro com o ISBN fornecido" << std::endl;
     }
 }
 void Devolver(Usuario* user){
@@ -157,8 +156,19 @@ void DeletarUsuario(std::vector<Usuario>* usuarios){
     bool userExiste=false;
     for(int i = 0; i < usuarios->size(); ++i){
         if(usuarios->at(i).login==username){
-            usuarios->erase(usuarios->begin() + i);
             userExiste = true;
+            if (usuarios->at(i).getMulta() > 0 || usuarios->at(i).temEmpr()) {
+                if (usuarios->at(i).getMulta() > 0) {
+                    std::cout << "Voce nao pode excluir um usuario com multa no sistema" << std::endl;
+                }
+                if (usuarios->at(i).temEmpr()) {
+                    std::cout << "Voce nao pode excluir um usuario com emprestimo ativo" << std::endl;
+                }
+            }
+            else {
+                std::cout << "Usuario deletado com exito" << std::endl;
+                usuarios->erase(usuarios->begin() + i);
+            }
             break;
         }
     }
@@ -169,32 +179,41 @@ void DeletarUsuario(std::vector<Usuario>* usuarios){
 void MultarUsuario(std::vector<Usuario>* usuarios){
     std::string username;
     float valor;
-    std::cout << "Digite o nome de usuario a alterar a multa:" << std::endl;
-    std::cin >> username;
-    std::cout << "Digite o valor da multa a ser aplicado:" << std::endl;
-    std::cin >> valor;
-    for(int i = 0; i < usuarios->size(); ++i){
-        if(usuarios->at(i).login==username){
-            usuarios->at(i).setMulta(valor);
+    bool userExiste=false;
+    do {
+        std::cout << "Digite o valor da multa a ser aplicado, '-1' para cancelar:" << std::endl;
+        std::cin >> valor;
+        if (valor >= 0) {
+            std::cout << "Digite o nome de usuario a alterar a multa:" << std::endl;
+            std::cin >> username;
+            for (int i = 0; i < usuarios->size(); ++i) {
+                if (usuarios->at(i).login == username) {
+                    usuarios->at(i).setMulta(valor);
+                    userExiste = true;
+                    std::cout << "Multa alterada com exito" << std::endl;
+                    break;
+                }
+            }
+            if (!userExiste) {
+                std::cout << "Esse usuario nao existe" << std::endl;
+            }
         }
-    }
+        else if (valor == -1) {
+            std::cout << "Operacao cancelada" << std::endl;
+        }
+        else {
+            std::cout << "Valor invalido" << std::endl;
+        }
+    } while (valor < -1);
 }
 void CadLivro(std::vector<Livro>* livros){
     std::string nome, isbn, genero, autor, editora;
-    int ano;
+    int ano, dispo;
     bool conflito=false;
     std::cout << "Cadastro livro\nDigite o nome do livro:" << std::endl;
     std::cin >> nome;
     std::cout << "Digite o ISBN do livro:" << std::endl;
     std::cin >> isbn;
-    std::cout << "Digite o genero do livro:" << std::endl;
-    std::cin >> genero;
-    std::cout << "Digite o ano de edicao do livro:" << std::endl;
-    std::cin >> ano;
-    std::cout << "Digite o autor do livro:" << std::endl;
-    std::cin >> autor;
-    std::cout << "Digite a editora do livro:" << std::endl;
-    std::cin >> editora;
     for (int i = 0; i < livros->size(); ++i) {
         if (livros->at(i).isbn == isbn) {
             conflito = true;
@@ -202,38 +221,50 @@ void CadLivro(std::vector<Livro>* livros){
         }
     }
     if(!conflito) {
-        Livro livro(nome, isbn, genero, ano, autor, editora);
+        std::cout << "Digite o genero do livro:" << std::endl;
+        std::cin >> genero;
+        std::cout << "Digite o ano de edicao do livro:" << std::endl;
+        std::cin >> ano;
+        std::cout << "Digite o autor do livro:" << std::endl;
+        std::cin >> autor;
+        std::cout << "Digite a editora do livro:" << std::endl;
+        std::cin >> editora;
+        do {
+            std::cout << "Digite a quantidade de exemplares disponiveis:" << std::endl;
+            std::cin >> dispo;
+            if (dispo <= 0) {
+                std::cout << "Voce precisa ter pelo menos 1 exemplar" << std::endl;
+            }
+        } while (dispo <= 0);
+        
+        Livro livro(nome, isbn, genero, ano, autor, editora, dispo);
         livros->push_back(livro);
     }
 }
-void setLivroStatus(std::vector<Livro>* livros) {
+void setLivroDispo(std::vector<Livro>* livros) {
     std::string isbn;
-    int emprestado; 
+    int dispo; 
     bool livroExiste = false;
     std::cout << "Digite o ISBN do livro a ser modificado:" << std::endl;
     std::cin >> isbn;
     for (int i = 0; i < livros->size(); i++) {
         if (livros->at(i).isbn == isbn) {
             livroExiste = true;
-            if (livros->at(i).emprestado) {
-                std::cout << "O livro " << livros->at(i).nome << " esta emprestado" << std::endl;
-            }
-            else {
-                std::cout << "O livro " << livros->at(i).nome << " nao esta emprestado" << std::endl;
-            }
+            std::cout << "O livro " << livros->at(i).nome << " possui " << livros->at(i).getDisponiveis() << " exemplares disponiveis" << std::endl;
             do {
-                std::cout << "1- O livro esta disponivel\n2- O livro nao esta disponivel\nQual opcao?" << std::endl;
-                std::cin >> emprestado;
-                if (emprestado == 1) {
-                    livros->at(i).emprestado = false;
+                std::cout << "Digite a quantidade de exemplares disponiveis, '-1' para cancelar:" << std::endl;
+                std::cin >> dispo;
+                if (dispo >= 0) {
+                    livros->at(i).setDisponiveis(dispo);
+                    std::cout << "Operacao concluida com exito" << std::endl;
                 }
-                else if (emprestado == 2) {
-                    livros->at(i).emprestado = true;
+                else if (dispo == -1) {
+                    std::cout << "Operacao cancelada com exito" << std::endl;
                 }
                 else {
-                    std::cout << "Opcao invalida!" << std::endl;
+                    std::cout << "Valor invalido" << std::endl;
                 }
-            } while (emprestado != 1 && emprestado != 2);
+            } while (dispo<-1);
         }
     }
     if (!livroExiste) {
@@ -244,14 +275,26 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
     int opc;
     do{
         if(user->getAdmin()){ //admin
-            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Cadastrar livro\n8-  Cadastrar Admin\n9- Deletar livro\n10- Deletar usuario\n11- Multar usuario\n12- Alterar status de emprestimo de um livro\n13- Listar usuarios cadastrados \n14- Logout\nSelecione a opcao: " << std::endl;
+            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Cadastrar livro\n8-  Cadastrar Admin\n9- Deletar livro\n10- Deletar usuario\n11- Multar usuario\n12- Alterar a quantidade de livros disponiveis\n13- Listar usuarios cadastrados \n14- Logout\nSelecione a opcao: " << std::endl;
         }
         else{
             std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Logout\nSelecione a opcao: " << std::endl;
         }
         std::cin >> opc;
-        switch (opc)
-        {
+        if (user->getAdmin()) {
+            if (!opc >= 1 && opc <= 14) {
+                std::cout << "Opcao invalida!" << std::endl;
+                break;
+            }
+        }
+        else {
+            if (!opc >= 1 && opc <= 7) {
+                std::cout << "Opcao invalida!" << std::endl;
+                opc = -1;
+                break;
+            }
+        }
+        switch (opc) {
         case 1:
             ConsultarLivros(livros);
             break;
@@ -271,66 +314,33 @@ void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* 
             ConsultarEmpr(user);
             break;
         case 7:
-            if(user->getAdmin()){
+            if (user->getAdmin()) {
                 CadLivro(livros);
             }
-            else{
-                opc=14;
+            else {
+                opc = 14;
             }
             break;
         case 8:
-            if(user->getAdmin()){
-                Cadastrar(usuarios, true);
-            }
-            else {
-                opc = -1;
-            }
+            Cadastrar(usuarios, true);
             break;
         case 9:
-            if(user->getAdmin()){
-                DeletarLivro(livros);
-            }
-            else {
-                opc = -1;
-            }
+            DeletarLivro(livros);
             break;
         case 10:
-            if(user->getAdmin()){
-                DeletarUsuario(usuarios);
-            }
-            else {
-                opc = -1;
-            }
+            DeletarUsuario(usuarios);
             break;
         case 11:
-            if(user->getAdmin()){
-                MultarUsuario(usuarios);
-            }
-            else {
-                opc = -1;
-            }
+            MultarUsuario(usuarios);
             break;
         case 12:
-            if (user->getAdmin()) {
-                setLivroStatus(livros);
-            }
-            else {
-                opc = -1;
-            }
+            setLivroDispo(livros);
             break;
         case 13:
-            if (user->getAdmin()) {
-                ListarUsuarios(usuarios);
-            }
-            else {
-                opc = -1;
-            }
+            ListarUsuarios(usuarios);
             break;
         case 14:
             std::cout << "Logout!" << std::endl;
-            break;
-        default:
-            std::cout << "Opcao invalida!" << std::endl;
             break;
         }
     } while(opc!=14);
