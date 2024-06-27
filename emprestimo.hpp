@@ -7,7 +7,7 @@
 #include "livro.hpp"
 class Emprestimo{
     public:
-        Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro, std::vector<Emprestimo*>* emprestimos);
+        Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro, int* _countId);
         ~Emprestimo();
         Livro* getLivro();
         std::time_t getDataEmpr();
