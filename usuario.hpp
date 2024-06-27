@@ -27,6 +27,7 @@ class Usuario{
     protected:
         std::string cpf, nome, telefone, email;
         float multa;
+        int countId;
         bool isAdmin;
         std::vector<Emprestimo*> emprestimos;
     private:

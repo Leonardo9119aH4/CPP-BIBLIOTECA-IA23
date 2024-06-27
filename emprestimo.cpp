@@ -4,11 +4,12 @@
 #include <random>
 #include "livro.hpp"
 #include "emprestimo.hpp"
-Emprestimo::Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro, std::vector<Emprestimo*>* emprestimos) {
+Emprestimo::Emprestimo(std::time_t _dataEmpr, std::time_t _dataDevolucao, Livro* _livro, int* _countId) {
     dataEmprestimo = _dataEmpr;
     dataDevolucao = _dataDevolucao;
     livro = _livro;
-    id = emprestimos->size() + 1;
+    id = *_countId;
+    *_countId = *_countId+1;
     livro->setDisponiveis(livro->getDisponiveis() - 1);
 }
 Emprestimo::~Emprestimo() {

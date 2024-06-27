@@ -45,17 +45,26 @@ void Cadastrar(std::vector<Usuario>* usuarios, bool isAdmin) {
     }
 }
 void ConsultarLivros(std::vector<Livro>* livros){
+    bool algumDispo=false, algumIndispo=false;
     std::cout << "Temos disponiveis: " << std::endl;
     for(int i = 0; i < livros->size(); ++i){
         if (livros->at(i).getDisponiveis() > 0) {
             std::cout << "Nome: " << livros->at(i).nome << "; ISBN: " << livros->at(i).isbn << "; Ano: " << livros->at(i).ano << "; Genero: " << livros->at(i).genero << "; Autor: " << livros->at(i).autor << "; Editora: " << livros->at(i).editora << std::endl;
+            algumDispo = true;
         }  
+    }
+    if (!algumDispo) {
+        std::cout << "(nenhum)" << std::endl;
     }
     std::cout << "Livros nao disponiveis:" << std::endl;
     for (int i = 0; i < livros->size(); ++i) {
         if (livros->at(i).getDisponiveis() <= 0) {
             std::cout << "Nome: " << livros->at(i).nome << "; ISBN: " << livros->at(i).isbn << "; Ano: " << livros->at(i).ano << "; Genero: " << livros->at(i).genero << "; Autor: " << livros->at(i).autor << "; Editora: " << livros->at(i).editora << std::endl;
+            algumIndispo = true;
         }
+    }
+    if (!algumIndispo) {
+        std::cout << "(nenhum)" << std::endl;
     }
 }
 void ConsultarMulta(Usuario* user){
