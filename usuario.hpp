@@ -24,6 +24,8 @@ class Usuario{
         bool getAdmin();
         std::string getNome();
         std::string getCPF();
+        std::string getTelefone();
+        std::string getEmail();
     protected:
         std::string cpf, nome, telefone, email;
         float multa;
