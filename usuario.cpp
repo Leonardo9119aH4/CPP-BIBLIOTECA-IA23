@@ -32,7 +32,7 @@ int Usuario::Emprestar(Livro* _livro) {
     if (multa <= 0) {
         if (_livro->getDisponiveis() > 0) {
             std::time_t dataEmprestimo = std::time(nullptr);
-            std::time_t dataDevolucao = dataEmprestimo + 336 * 3600; //time_t só salva em segundos
+            std::time_t dataDevolucao = dataEmprestimo + 336 * 3600; //time_t sÃ³ salva em segundos
             auto empr = new Emprestimo(dataEmprestimo, dataDevolucao, _livro, &countId);
             emprestimos.push_back(empr);
             return 1; //codigo de exito
@@ -101,4 +101,9 @@ std::string Usuario::getNome() {
 std::string Usuario::getCPF() {
     return cpf;
 }
-
+std::string getTelefone(){
+    return telefone;
+}
+std::string getEmail(){
+    return email;
+}
