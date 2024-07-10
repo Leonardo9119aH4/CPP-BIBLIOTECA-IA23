@@ -279,30 +279,35 @@ void setLivroDispo(std::vector<Livro>* livros) {
         std::cout << "O ISBN digitado nao corresponde a nenhum livro!" << std::endl;
     }
 }
+void ExibirDados(Usuario* user){
+    std::cout << "Login: " << user->login << "\nNome: " << user->getNome() << "\nCPF: " << user->getCPF() << "\nEmail: " << user->getEmail() << "\nTelefone: " << user->getTelefone() << std::endl;
+}
 void opcaoUser(Usuario* user, std::vector<Livro>* livros, std::vector<Usuario>* usuarios){
     int opc;
     do{
         if(user->getAdmin()){ //admin
-            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Cadastrar livro\n8-  Cadastrar Admin\n9- Deletar livro\n10- Deletar usuario\n11- Multar usuario\n12- Alterar a quantidade de livros disponiveis\n13- Listar usuarios cadastrados \n14- Logout\nSelecione a opcao: " << std::endl;
+            std::cout << "0- Exibir dados cadastrais\n1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Cadastrar livro\n8-  Cadastrar Admin\n9- Deletar livro\n10- Deletar usuario\n11- Multar usuario\n12- Alterar a quantidade de livros disponiveis\n13- Listar usuarios cadastrados \n14- Logout\nSelecione a opcao: " << std::endl;
         }
         else{
-            std::cout << "1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Logout\nSelecione a opcao: " << std::endl;
+            std::cout << "0- Exibir dados cadastrais\n1- Consultar livros dispoiveis\n2- Realizar novo emprestimo\n3- Devolver um livro\n4- Ver valor de multa pendente\n5- Pagar multa\n6- Ver emprestimos realizados\n7- Logout\nSelecione a opcao: " << std::endl;
         }
         std::cin >> opc;
         if (user->getAdmin()) {
-            if (!opc >= 1 && opc <= 14) {
+            if (!opc >= 0 && opc <= 14) {
                 std::cout << "Opcao invalida!" << std::endl;
                 break;
             }
         }
         else {
-            if (!opc >= 1 && opc <= 7) {
+            if (!opc >= 0 && opc <= 7) {
                 std::cout << "Opcao invalida!" << std::endl;
                 opc = -1;
                 break;
             }
         }
         switch (opc) {
+        case 0:
+            ExibirDados(user);    
         case 1:
             ConsultarLivros(livros);
             break;
